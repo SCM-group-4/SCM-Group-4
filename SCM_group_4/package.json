@@ -1,0 +1,10 @@
+{
+  "name": "scientific-calculator",
+  "version": "0.1.0",
+  "private": true,
+  "description": "NOVA Scientific — a scientific calculator built with HTML, CSS and vanilla JavaScript (UI phase).",
+  "type": "module",
+  "scripts": {
+    "start": "python3 -m http.server 8080"
+  }
+}
