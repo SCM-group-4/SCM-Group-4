@@ -8,7 +8,7 @@ import { ANGLE_MODES, SCIENTIFIC_KEYS, resolveKey } from './scientific.js';
 import * as history from './history.js';
 
 const THEME_STORAGE_KEY = 'nova-theme';
-const IDLE_STATUS = 'Interface preview · calculation engine not connected';
+const IDLE_STATUS = '';
 const OPERATORS = new Set(['+', '−', '×', '÷']);
 // Splits an expression into editable tokens so DEL removes "sin(" as one unit.
 const TOKEN_PATTERN = /10\^\(|e\^\(|[a-z]+\(|[√∛]\(|Ans|[\s\S]/gu;
