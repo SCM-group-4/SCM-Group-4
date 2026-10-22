@@ -327,8 +327,7 @@ function applyFunc(name, arg) {
     case 'cos':  return cleanTrig(Math.cos(toRad(arg)));
     case 'tan': {
       const r = toRad(arg);
-      // Detect exact multiples of 90° where tan is undefined
-      if (_angleMode === 'DEG' && arg % 180 !== 0 && Math.abs(arg % 180) === 90) {
+      if (Math.abs(Math.cos(r)) < 1e-14) {
         throw new RangeError('tan is undefined at this angle');
       }
       return cleanTrig(Math.tan(r));
