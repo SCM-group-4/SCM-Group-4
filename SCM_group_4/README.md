@@ -1,7 +1,9 @@
 # NOVA Scientific
 
 A scientific calculator built with HTML5, CSS3 and vanilla JavaScript.
-**Status: UI phase.** The calculation engine is not connected yet.
+The calculation engine is connected and supports arithmetic, scientific
+functions, DEG/RAD trigonometry, constants, factorials, percentages, and
+scientific notation.
 
 ## Run locally
 
@@ -19,12 +21,11 @@ python3 -m http.server 8080     # or: npm start
 | --- | --- |
 | `index.html` | Semantic markup: header, display, keypad, history |
 | `css/style.css` | Design tokens (dark/light themes), layout, components |
-| `js/main.js` | UI controller: input, rendering, theme, keyboard, history UI |
-| `js/calculator.js` | Engine integration point (`evaluate`) — stub |
-| `js/scientific.js` | Scientific key labels, SHIFT variants, inserted text |
+| `js/main.js` | UI controller: input, rendering, theme, keyboard, history |
+| `js/calculator.js` | Calculation engine: parser, scientific functions, formatting |
+| `js/scientific.js` | Scientific key labels, SHIFT variants, inserted expressions |
 | `js/history.js` | In-memory history store |
 
-## Connecting the engine later
-
-Implement `evaluate(expression, { angleMode, ans })` in `js/calculator.js` and return
-`{ ok: true, value }` or `{ ok: false, error }`. `main.js` already renders results, errors and history from that shape.
+The keypad supports inverse trigonometric functions, cube roots, cubes, and
+powers of ten or e through the SHIFT key. Results and errors are shown on the
+display, and successful calculations are added to history.

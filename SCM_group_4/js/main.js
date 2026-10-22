@@ -1,7 +1,7 @@
 /**
  * NOVA Scientific — UI controller.
  * Owns input editing, display rendering, theme, keyboard and history UI.
- * Mathematical evaluation is delegated to calculator.js (not connected yet).
+ * Mathematical evaluation is delegated to calculator.js.
  */
 import { evaluate } from './calculator.js';
 import { ANGLE_MODES, SCIENTIFIC_KEYS, resolveKey } from './scientific.js';

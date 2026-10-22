@@ -5,7 +5,7 @@
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 18px;
-  --key-h: 46px;
+  --key-h: 52px;
   --gap: 6px;
 
   --accent: #EC4899;
@@ -55,14 +55,14 @@
 
 @media (min-width: 480px) {
   :root {
-    --key-h: 50px;
+    --key-h: 56px;
     --gap: 8px;
   }
 }
 
 @media (min-width: 900px) {
   :root {
-    --key-h: 54px;
+    --key-h: 60px;
   }
 }
 
@@ -322,7 +322,7 @@ kbd {
 .display__expression {
   min-height: 1.6rem;
   margin-top: 8px;
-  font-size: 1rem;
+  font-size: 1.125rem;
   color: var(--text-2);
   text-align: right;
   white-space: nowrap;
@@ -400,7 +400,7 @@ kbd {
   color: var(--key-fg);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  font-size: 1.25rem;
+  font-size: 1.4rem;
   font-weight: 500;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
@@ -422,12 +422,12 @@ kbd {
 }
 
 .key--sci {
-  font-size: 0.85rem;
+  font-size: 1rem;
 }
 
 @media (min-width: 480px) {
   .key--sci {
-    font-size: 0.95rem;
+    font-size: 1.05rem;
   }
 }
 
