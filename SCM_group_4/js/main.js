@@ -78,6 +78,41 @@ function inputOperator(op) {
     state.tokens[state.tokens.length - 1] = op; // replace the previous operator
     return;
   }
+
+function inputFraction() {
+  const numerator = window.prompt('Enter the numerator:');
+  if (numerator === null) return;
+
+  const denominator = window.prompt('Enter the denominator:');
+  if (denominator === null) return;
+
+  const validNumber = (value) =>
+    /^-?\d+(\.\d+)?$/.test(value.trim());
+
+  if (
+    !validNumber(numerator) ||
+    !validNumber(denominator) ||
+    Number(denominator) === 0
+  ) {
+    window.alert('Enter valid numbers. The denominator cannot be zero.');
+    return;
+  }
+
+  const num = numerator.trim().replace(/^-/, '−');
+  const den = denominator.trim().replace(/^-/, '−');
+
+  state.tokens.push(
+    ...tokenize(`(${num})÷(${den})`)
+  );
+}
+const handlers = {
+  digit: (v) => state.tokens.push(v),
+  decimal: inputDecimal,
+  operator: inputOperator,
+  fraction: inputFraction,
+  // Keep all the other existing handlers.
+};
+
   state.tokens.push(op);
 }
 
@@ -336,14 +371,7 @@ function onKeydown(event) {
   flashKey(...mapped);
 }
 
-/* ---------- Events & init ---------- */
-
-ui.keypad.addEventListener('click', (event) => {
-  const btn = event.target.closest('button[data-action]');
-  if (btn) perform(btn.dataset.action, btn.dataset.value ?? btn.dataset.fn);
-});
-
-ui.historyList.addEventListener('click', (event) => {
+EventListener('click', (event) => {
   const btn = event.target.closest('.history__item');
   const entry = btn && history.getEntries().find((e) => String(e.id) === btn.dataset.id);
   if (!entry) return;

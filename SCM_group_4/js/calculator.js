@@ -397,7 +397,7 @@ function formatResult(value) {
   if (str.includes('.') && str.split('.')[1].length > 10) {
     str = parseFloat(value.toPrecision(10)).toString();
   }
-  return str;
+  return { ok: true, value: formatResult(result) };
 }
 
 /* ------------------------------------------------------------------ */
