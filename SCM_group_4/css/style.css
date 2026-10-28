@@ -471,6 +471,23 @@ kbd {
   background: var(--accent-hover);
   border-color: var(--accent-hover);
 }
+/* unit converter button styling*/
+.key--converter {
+  --key-bg: var(--accent);
+  --key-fg: var(--on-accent);
+  grid-column: 1 / -1;
+  border-color: var(--accent);
+  font-size: 1.5rem;
+  font-weight: 600;
+
+}
+.key--converter:hover {
+  filter: brightness(1.08);
+}
+.key--converter:focus-visible{
+  outline: 2px solid currentColor;
+  outline-offset: pointer;
+}
 
 /* History */
 .history {
