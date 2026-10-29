@@ -405,3 +405,142 @@ history.subscribe(renderHistory);
 applyTheme(readTheme());
 renderHistory(history.getEntries());
 render();
+
+
+
+/* ---------- Currency converter ---------- */
+const currencyToggle = document.querySelector('#currency-toggle');
+const currencyPanel = document.querySelector('#currency-panel');
+const currencyBack = document.querySelector('#currency-back');
+const currencyStatus = document.querySelector('#currency-status');
+const currencyRefresh = document.querySelector('#currency-refresh');
+const currencyReset = document.querySelector('#currency-reset');
+const currencyRows = [...document.querySelectorAll('#currency-panel .currency-row')];
+const historyPanel = document.querySelector('.panel.history');
+
+let currencyRates = null;
+let currencySourceIndex = 0;
+
+function showCurrencyConverter(show) {
+  currencyPanel.hidden = !show;
+  currencyPanel.classList.toggle('is-active', show);
+  ui.display.hidden = show;
+  ui.keypad.hidden = show;
+  if (historyPanel) historyPanel.hidden = show;
+  currencyToggle.setAttribute('aria-expanded', String(show));
+  setSettingsOpen(false);
+
+  if (show && !currencyRates) loadCurrencyRates();
+}
+
+function calculateCurrencyRows() {
+  if (!currencyRates) return;
+
+  const sourceRow = currencyRows[currencySourceIndex];
+  const sourceCode = sourceRow.querySelector('select').value;
+  const sourceAmount = Number(sourceRow.querySelector('input').value);
+
+  if (!Number.isFinite(sourceAmount) || sourceAmount < 0) {
+    currencyStatus.textContent = 'Enter a valid non-negative amount.';
+    return;
+  }
+
+  const sourceRate = currencyRates[sourceCode];
+
+  if (!sourceRate) {
+    currencyStatus.textContent = `Rate unavailable for ${sourceCode}.`;
+    return;
+  }
+
+  currencyRows.forEach((row, index) => {
+    if (index === currencySourceIndex) return;
+
+    const targetCode = row.querySelector('select').value;
+    const targetRate = currencyRates[targetCode];
+    const output = row.querySelector('input');
+
+    if (!targetRate) {
+      output.value = '';
+      return;
+    }
+
+    const converted = sourceAmount / sourceRate * targetRate;
+    output.value = converted.toLocaleString('en', {
+      useGrouping: false,
+      maximumFractionDigits: 6
+    });
+  });
+}
+
+async function loadCurrencyRates() {
+  currencyStatus.textContent = 'Loading latest available exchange rates...';
+  currencyRefresh.disabled = true;
+
+  try {
+    const response = await fetch('https://open.er-api.com/v6/latest/USD');
+
+    if (!response.ok) throw new Error('Rate service unavailable');
+
+    const data = await response.json();
+
+    if (data.result !== 'success' || !data.rates) {
+      throw new Error('Exchange rates could not be loaded');
+    }
+
+    for (const code of ['XAF', 'USD', 'EUR', 'GBP', 'NGN']) {
+      if (typeof data.rates[code] !== 'number') {
+        throw new Error(`The rate provider did not return ${code}`);
+      }
+    }
+
+    currencyRates = data.rates;
+
+    const updated = data.time_last_update_utc
+      ? new Date(data.time_last_update_utc).toLocaleString()
+      : 'date unavailable';
+
+    currencyStatus.textContent = `Rates last updated: ${updated}. Rates update daily.`;
+
+    calculateCurrencyRows();
+  } catch (error) {
+    currencyStatus.textContent =
+      'Could not load exchange rates. Check your internet connection and try Refresh rates.';
+    console.error('Currency rates error:', error);
+  } finally {
+    currencyRefresh.disabled = false;
+  }
+}
+
+currencyToggle.addEventListener('click', () => showCurrencyConverter(true));
+currencyBack.addEventListener('click', () => showCurrencyConverter(false));
+currencyRefresh.addEventListener('click', loadCurrencyRates);
+
+currencyRows.forEach((row, index) => {
+  const select = row.querySelector('select');
+  const amount = row.querySelector('input');
+
+  amount.addEventListener('input', () => {
+    currencySourceIndex = index;
+    calculateCurrencyRows();
+  });
+
+  select.addEventListener('change', () => {
+    calculateCurrencyRows();
+  });
+});
+
+currencyReset.addEventListener('click', () => {
+  currencySourceIndex = 0;
+  currencyRows.forEach((row, index) => {
+    row.querySelector('input').value = index === 0 ? '1000' : '';
+  });
+  calculateCurrencyRows();
+});
+
+// Required attribution for the open-access exchange-rate service.
+const currencyAttribution = document.createElement('p');
+currencyAttribution.className = 'currency-panel__status';
+currencyAttribution.innerHTML =
+  'Exchange-rate data provided by <a href="https://www.exchangerate-api.com" target="_blank" rel="noopener noreferrer">ExchangeRate-API</a>.';
+currencyPanel.append(currencyAttribution);
+

@@ -707,3 +707,113 @@ kbd {
     transform: none;
   }
 }
+
+/* Currency converter */
+.currency-panel {
+  display: none;
+  width: 100%;
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 20px;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg, 18px);
+  box-sizing: border-box;
+}
+
+.currency-panel.is-active {
+  display: block;
+}
+
+.currency-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.currency-panel__title {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.currency-panel__status {
+  color: var(--text-2);
+  font-size: 0.8rem;
+  margin: 8px 0 16px;
+}
+
+.currency-row {
+  display: grid;
+  grid-template-columns: minmax(95px, 0.8fr) minmax(0, 1.4fr);
+  gap: 12px;
+  align-items: center;
+  padding: 12px;
+  margin-bottom: 10px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md, 12px);
+}
+
+.currency-row select,
+.currency-row input {
+  width: 100%;
+  min-width: 0;
+  padding: 10px;
+  font: inherit;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+
+.currency-row input {
+  text-align: right;
+}
+
+.currency-row select:focus,
+.currency-row input:focus {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.currency-panel__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.currency-panel__actions button {
+  flex: 1;
+  min-height: 44px;
+  padding: 10px 14px;
+  color: var(--text);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.currency-panel__actions button:hover {
+  border-color: var(--accent);
+}
+
+.currency-panel [hidden] {
+  display: none !important;
+}
+
+@media (max-width: 380px) {
+  .currency-panel {
+    padding: 12px;
+  }
+
+  .currency-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+}
