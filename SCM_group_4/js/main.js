@@ -1,9 +1,10 @@
 /**
  * NOVA Scientific — UI controller.
  * Owns input editing, display rendering, theme, keyboard and history UI.
- * Mathematical evaluation is delegated to calculator.js (not connected yet).
+ * Scientific expressions and quadratic equations are evaluated by dedicated modules.
  */
 import { evaluate } from './calculator.js';
+import { solveQuadratic } from './quadratic.js';
 import { ANGLE_MODES, SCIENTIFIC_KEYS, resolveKey } from './scientific.js';
 import * as history from './history.js';
 
@@ -33,6 +34,16 @@ const ui = {
   historyList: $('#history-list'),
   historyEmpty: $('#history-empty'),
   historyClear: $('#history-clear'),
+  modeToggle: $('#mode-toggle'),
+  calculatorWorkspace: $('#calculator-workspace'),
+  quadraticPanel: $('#quadratic-panel'),
+  quadraticForm: $('#quadratic-form'),
+  quadraticStatus: $('#quadratic-status'),
+  quadraticResults: $('#quadratic-results'),
+  quadraticEquation: $('#quadratic-equation'),
+  quadraticDiscriminant: $('#quadratic-discriminant'),
+  quadraticRoots: $('#quadratic-roots'),
+  quadraticVertex: $('#quadratic-vertex'),
 };
 
 const state = { tokens: [], result: '0', angle: 'DEG', shift: false, ans: null, status: null };
@@ -67,6 +78,41 @@ function inputOperator(op) {
     state.tokens[state.tokens.length - 1] = op; // replace the previous operator
     return;
   }
+
+function inputFraction() {
+  const numerator = window.prompt('Enter the numerator:');
+  if (numerator === null) return;
+
+  const denominator = window.prompt('Enter the denominator:');
+  if (denominator === null) return;
+
+  const validNumber = (value) =>
+    /^-?\d+(\.\d+)?$/.test(value.trim());
+
+  if (
+    !validNumber(numerator) ||
+    !validNumber(denominator) ||
+    Number(denominator) === 0
+  ) {
+    window.alert('Enter valid numbers. The denominator cannot be zero.');
+    return;
+  }
+
+  const num = numerator.trim().replace(/^-/, '−');
+  const den = denominator.trim().replace(/^-/, '−');
+
+  state.tokens.push(
+    ...tokenize(`(${num})÷(${den})`)
+  );
+}
+const handlers = {
+  digit: (v) => state.tokens.push(v),
+  decimal: inputDecimal,
+  operator: inputOperator,
+  fraction: inputFraction,
+  // Keep all the other existing handlers.
+};
+
   state.tokens.push(op);
 }
 
@@ -226,6 +272,73 @@ function setSettingsOpen(open) {
   ui.settingsToggle.setAttribute('aria-expanded', String(open));
 }
 
+function formatQuadraticNumber(value) {
+  if (Object.is(value, -0)) return '0';
+  return Number(value.toPrecision(10)).toString();
+}
+
+function solveQuadraticForm(event) {
+  event.preventDefault();
+  if (!ui.quadraticForm.reportValidity()) return;
+
+  const formData = new FormData(ui.quadraticForm);
+  const a = Number(formData.get('a'));
+  const b = Number(formData.get('b'));
+  const c = Number(formData.get('c'));
+
+  try {
+    const result = solveQuadratic(a, b, c);
+    ui.quadraticResults.hidden = false;
+    ui.quadraticDiscriminant.textContent = result.discriminant === undefined
+      ? 'Not applicable (a = 0)'
+      : formatQuadraticNumber(result.discriminant);
+    ui.quadraticVertex.textContent = result.vertex
+      ? `(${formatQuadraticNumber(result.vertex.x)}, ${formatQuadraticNumber(result.vertex.y)})`
+      : 'Not applicable (a = 0)';
+
+    if (result.kind === 'all-values') {
+      ui.quadraticStatus.textContent = 'Every real number is a solution (0 = 0).';
+      ui.quadraticEquation.textContent = '0 = 0';
+      ui.quadraticRoots.textContent = 'All real numbers';
+    } else if (result.kind === 'no-solution') {
+      ui.quadraticStatus.textContent = 'There is no solution because the equation reduces to a non-zero constant.';
+      ui.quadraticEquation.textContent = `${formatQuadraticNumber(c)} = 0`;
+      ui.quadraticRoots.textContent = 'No solution';
+    } else {
+      ui.quadraticEquation.textContent =
+        `${formatQuadraticNumber(a)}x² ${b < 0 ? '−' : '+'} ${formatQuadraticNumber(Math.abs(b))}x ${c < 0 ? '−' : '+'} ${formatQuadraticNumber(Math.abs(c))} = 0`;
+
+      if (result.kind === 'linear') {
+        ui.quadraticStatus.textContent = 'Since a = 0, this is a linear equation.';
+        ui.quadraticRoots.textContent = `x = ${formatQuadraticNumber(result.roots[0])}`;
+      } else if (result.kind === 'complex') {
+        ui.quadraticStatus.textContent = 'The discriminant is negative, so the roots are complex.';
+        ui.quadraticRoots.textContent =
+          `x₁ = ${formatQuadraticNumber(result.real)} + ${formatQuadraticNumber(result.imaginary)}i; x₂ = ${formatQuadraticNumber(result.real)} − ${formatQuadraticNumber(result.imaginary)}i`;
+      } else if (result.kind === 'repeated') {
+        ui.quadraticStatus.textContent = 'The discriminant is zero, so there is one repeated real root.';
+        ui.quadraticRoots.textContent = `x = ${formatQuadraticNumber(result.roots[0])} (repeated)`;
+      } else {
+        ui.quadraticStatus.textContent = 'The discriminant is positive, so there are two real roots.';
+        ui.quadraticRoots.textContent =
+          `x₁ = ${formatQuadraticNumber(result.roots[0])}; x₂ = ${formatQuadraticNumber(result.roots[1])}`;
+      }
+    }
+  } catch (error) {
+    if (!(error instanceof RangeError)) throw error;
+    ui.quadraticResults.hidden = true;
+    ui.quadraticStatus.textContent = error.message;
+  }
+}
+
+function setCalculatorMode(quadraticMode) {
+  ui.calculatorWorkspace.hidden = quadraticMode;
+  ui.quadraticPanel.hidden = !quadraticMode;
+  ui.modeToggle.setAttribute('aria-pressed', String(quadraticMode));
+  ui.modeToggle.textContent = quadraticMode ? 'Scientific calculator' : 'Quadratic solver';
+  if (quadraticMode) ui.quadraticForm.querySelector('input').focus();
+}
+
 /* ---------- Keyboard ---------- */
 
 const KEY_MAP = {
@@ -248,6 +361,7 @@ function flashKey(action, value) {
 function onKeydown(event) {
   if (event.ctrlKey || event.metaKey || event.altKey) return;
   if (event.key === 'Escape' && !ui.settingsPanel.hidden) return setSettingsOpen(false);
+  if (event.target.matches('input, textarea, select, [contenteditable="true"]')) return;
   // Let Enter activate focused header or history buttons natively.
   if (event.key === 'Enter' && event.target.closest('.app-header, .history')) return;
   const mapped = isDigit(event.key) ? ['digit', event.key] : KEY_MAP[event.key];
@@ -257,14 +371,7 @@ function onKeydown(event) {
   flashKey(...mapped);
 }
 
-/* ---------- Events & init ---------- */
-
-ui.keypad.addEventListener('click', (event) => {
-  const btn = event.target.closest('button[data-action]');
-  if (btn) perform(btn.dataset.action, btn.dataset.value ?? btn.dataset.fn);
-});
-
-ui.historyList.addEventListener('click', (event) => {
+EventListener('click', (event) => {
   const btn = event.target.closest('.history__item');
   const entry = btn && history.getEntries().find((e) => String(e.id) === btn.dataset.id);
   if (!entry) return;
@@ -286,6 +393,8 @@ ui.themeToggle.addEventListener('click', () => {
 });
 
 ui.settingsToggle.addEventListener('click', () => setSettingsOpen(ui.settingsPanel.hidden));
+ui.modeToggle.addEventListener('click', () => setCalculatorMode(ui.quadraticPanel.hidden));
+ui.quadraticForm.addEventListener('submit', solveQuadraticForm);
 document.addEventListener('click', (event) => {
   if (!event.target.closest('.settings')) setSettingsOpen(false);
 });

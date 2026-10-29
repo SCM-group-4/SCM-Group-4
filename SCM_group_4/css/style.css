@@ -160,7 +160,31 @@ button:disabled {
 
 .header-actions {
   display: flex;
+  align-items: center;
   gap: 8px;
+}
+
+.mode-toggle {
+  min-height: 44px;
+  padding: 0 12px;
+  color: var(--accent-text);
+  background: var(--accent-soft);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.mode-toggle:hover,
+.mode-toggle[aria-pressed="true"] {
+  border-color: var(--accent);
+}
+
+@media (max-width: 420px) {
+  .mode-toggle {
+    padding: 0 8px;
+    font-size: 0.72rem;
+  }
 }
 
 .icon-btn {
@@ -283,6 +307,92 @@ kbd {
   flex-direction: column;
   gap: 14px;
   min-width: 0;
+}
+
+/* Quadratic solver */
+.quadratic {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.quadratic__title {
+  margin: 0;
+  font-size: 1.15rem;
+}
+
+.quadratic__description {
+  margin: 4px 0 0;
+  color: var(--text-2);
+  font-size: 0.9rem;
+}
+
+.quadratic__form {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--gap);
+  margin-top: 20px;
+}
+
+.quadratic__field {
+  display: grid;
+  gap: 6px;
+  color: var(--text-2);
+  font-size: 0.85rem;
+}
+
+.quadratic__field input {
+  width: 100%;
+  min-width: 0;
+  height: var(--key-h);
+  padding: 0 10px;
+  color: var(--text);
+  background: var(--display-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+}
+
+.quadratic__field input:focus {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.quadratic__submit {
+  grid-column: 1 / -1;
+  margin-top: 6px;
+}
+
+.quadratic__status {
+  min-height: 1.25rem;
+  margin: 16px 0 0;
+  color: var(--text-2);
+}
+
+.quadratic__results {
+  display: grid;
+  gap: 10px;
+  margin: 16px 0 0;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+
+.quadratic__results > div {
+  display: grid;
+  grid-template-columns: minmax(100px, 0.35fr) minmax(0, 1fr);
+  gap: 12px;
+}
+
+.quadratic__results dt {
+  color: var(--text-2);
+}
+
+.quadratic__results dd {
+  margin: 0;
+  text-align: right;
+  overflow-wrap: anywhere;
+  font-variant-numeric: tabular-nums;
 }
 
 /* Display */
