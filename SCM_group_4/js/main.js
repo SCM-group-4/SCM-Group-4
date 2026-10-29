@@ -7,7 +7,7 @@ import { evaluate } from './calculator.js';
 import { solveQuadratic } from './quadratic.js';
 import { ANGLE_MODES, SCIENTIFIC_KEYS, resolveKey } from './scientific.js';
 import * as history from './history.js';
-
+import { initConverter } from './converter.js';    
 const THEME_STORAGE_KEY = 'nova-theme';
 const IDLE_STATUS = '';
 const OPERATORS = new Set(['+', '−', '×', '÷']);
@@ -405,3 +405,4 @@ history.subscribe(renderHistory);
 applyTheme(readTheme());
 renderHistory(history.getEntries());
 render();
+initConverter();
