@@ -17,9 +17,10 @@ npm start
 
 | Path | Role |
 | --- | --- |
-| `index.html` | Semantic markup: header, display, keypad, history, and quadratic solver |
+| `index.html` | Semantic markup: header, display, keypad, history, and converter panels |
 | `css/style.css` | Design tokens (dark/light themes), layout, and components |
 | `js/main.js` | UI controller: input, rendering, theme, keyboard, history, and mode toggle |
+| `js/currency.js` | Currency converter UI and exchange-rate calculations |
 | `js/calculator.js` | Scientific expression parser and evaluator |
 | `js/quadratic.js` | Quadratic equation solver for roots and vertex |
 | `js/scientific.js` | Scientific key labels, SHIFT variants, and inserted text |
@@ -33,6 +34,14 @@ The solver reports the equation, discriminant, roots, and vertex. It handles
 two real roots, repeated roots, complex roots, the degenerate linear case
 (`a = 0`), equations with no solution, and identities with infinitely many
 solutions.
+
+## Currency converter
+
+Select **Currency** in the header to open the converter. Choose an amount and
+currencies, then select **Convert** to retrieve the latest available rate from
+the Frankfurter API (European Central Bank reference data). The displayed rate
+date is included with the result. An internet connection is required for
+conversions between different currencies.
 
 ## Changes in this update
 

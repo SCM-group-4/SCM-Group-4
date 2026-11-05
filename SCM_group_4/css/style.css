@@ -316,6 +316,141 @@ kbd {
   margin: 0 auto;
 }
 
+/* Currency converter */
+.currency {
+  width: 100%;
+  max-width: 980px;
+  margin: 0 auto 16px;
+}
+
+.currency__title {
+  margin: 0;
+  font-size: 1.15rem;
+}
+
+.currency__description {
+  margin: 4px 0 0;
+  color: var(--text-2);
+  font-size: 0.9rem;
+}
+
+.currency__form {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr) 44px minmax(0, 1fr) auto;
+  align-items: end;
+  gap: var(--gap);
+  margin-top: 20px;
+}
+
+.currency__field {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  color: var(--text-2);
+  font-size: 0.85rem;
+}
+
+.currency__field input,
+.currency__field select {
+  width: 100%;
+  min-width: 0;
+  height: var(--key-h);
+  padding: 0 10px;
+  color: var(--text);
+  background: var(--display-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font: inherit;
+}
+
+.currency__field select option {
+  color: var(--text);
+  background: var(--surface);
+}
+
+.currency__field input:focus,
+.currency__field select:focus {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.currency__swap {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: var(--key-h);
+  color: var(--text-2);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.currency__swap:hover {
+  color: var(--text);
+  border-color: var(--accent);
+}
+
+.currency__submit {
+  min-height: var(--key-h);
+  padding: 0 18px;
+}
+
+.currency__result {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px 16px;
+  margin-top: 20px;
+  padding: 14px 0;
+  border-top: 1px solid var(--border);
+}
+
+.currency__output {
+  color: var(--success);
+  font-size: clamp(1.5rem, 5vw, 2rem);
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.currency__rate,
+.currency__status,
+.currency__source {
+  margin: 0;
+  color: var(--text-2);
+  font-size: 0.85rem;
+}
+
+.currency__rate {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.currency__status[data-state="error"] {
+  color: var(--error);
+}
+
+.currency__source {
+  margin-top: 6px;
+  font-size: 0.75rem;
+}
+
+@media (max-width: 640px) {
+  .currency__form {
+    grid-template-columns: minmax(0, 1fr) 44px minmax(0, 1fr);
+  }
+
+  .currency__amount,
+  .currency__submit {
+    grid-column: 1 / -1;
+  }
+
+  .currency__submit {
+    width: 100%;
+  }
+}
+
 .quadratic__title {
   margin: 0;
   font-size: 1.15rem;
